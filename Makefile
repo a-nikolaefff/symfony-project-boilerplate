@@ -16,25 +16,23 @@ help: ## Print help
 
 #--------------------------------------------- New project init command -----------------------------------------------#
 
+INIT_CHECK = if [ -f /var/www/composer.json ]; then \
+	echo 'Project is already initialized. Skipping...'; \
+else \
+	$(SYMFONY_NEW_COMMAND) temp-symfony && \
+	mv -n temp-symfony/* temp-symfony/.[!.]* /var/www/ && \
+	rm -rf temp-symfony; \
+	rm compose.yaml compose.override.yaml; \
+fi
+
+init-symfony: ## Internal target, do not call directly, use init or init-web
+	@docker compose run --rm php sh -c "$(INIT_CHECK)"
+
 init: ## Init new symfony web app project
-	@docker compose run --rm php sh -c "\
-	if [ -f /var/www/composer.json ]; then \
-		echo 'Project is already initialized. Skipping...'; \
-	else \
-		symfony new temp-symfony && \
-		mv -n temp-symfony/* temp-symfony/.[!.]* /var/www/ && \
-		rm -rf temp-symfony; \
-	fi"
+	$(MAKE) SYMFONY_NEW_COMMAND="symfony new" init-symfony
 
 init-web: ## Init new symfony web app project
-	@docker compose run --rm php sh -c "\
-	if [ -f /var/www/composer.json ]; then \
-		echo 'Project is already initialized. Skipping...'; \
-	else \
-		symfony new --webapp temp-symfony && \
-		mv -n temp-symfony/* temp-symfony/.[!.]* /var/www/ && \
-		rm -rf temp-symfony; \
-	fi"
+	$(MAKE) SYMFONY_NEW_COMMAND="symfony new --webapp" init-symfony
 
 #------------------------------------------------- Docker commands ----------------------------------------------------#
 
