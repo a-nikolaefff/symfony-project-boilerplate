@@ -55,3 +55,26 @@ watch: ## Watch assets
 
 prod: ## Build assets
 	npm run build
+
+
+#---------------------------------------------------- Symfony commands -------------------------------------------------#
+controller: ## Make controller
+	docker compose exec ${CONTAINER_PHP} php bin/console make:controller
+
+crud: ## Make CRUD controller and Twig html templates
+	docker compose exec ${CONTAINER_PHP} php bin/console make:crud
+
+entity: ## Make entity
+	docker compose exec ${CONTAINER_PHP} php bin/console make:entity
+
+migration: ## Make migration
+	docker compose exec ${CONTAINER_PHP} php bin/console make:migration
+
+migrate: ## Migrate database
+	docker compose exec ${CONTAINER_PHP} php bin/console doctrine:migrations:migrate
+
+rollback: ## Rollback last migration
+	docker compose exec ${CONTAINER_PHP} php bin/console doctrine:migrations:migrate previous
+
+rollback-all: ## Rollback last migration
+	docker compose exec ${CONTAINER_PHP} php bin/console doctrine:migrations:migrate 0
